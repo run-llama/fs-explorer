@@ -11,3 +11,7 @@ wheels/
 
 # caches
 *_cache/
+tmp/
+
+# logs
+fs-explorer.log

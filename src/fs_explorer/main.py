@@ -15,6 +15,7 @@ from .workflow import (
     AskHumanEvent,
     HumanAnswerEvent,
 )
+from .caching import parse_and_cache, CACHE
 
 app = Typer()
 
@@ -76,7 +77,10 @@ async def run_workflow(task: str):
     return None
 
 
-@app.command()
+@app.command(
+    name="run",
+    help="Run the exploration with a specific task",
+)
 def main(
     task: Annotated[
         str,
@@ -88,3 +92,73 @@ def main(
     ],
 ) -> None:
     asyncio.run(run_workflow(task))
+
+@app.command(
+    name="load-cache",
+    help="Parse all the files in a directory at once (also recursively) and add them to a persistent cache for faster retrieval at agent runtime",
+)
+def load_cache(
+    directory: Annotated[
+        str,
+        Option(
+            "--directory",
+            "-d",
+            help="Directory containing the files to parse and load to cache. Defaults to current working directory.",
+        ),
+    ] = ".",
+    recursive: Annotated[
+        bool,
+        Option(
+            "--recursive/--no-recursive",
+            "-r",
+            help="Find files recursively within the target directory",
+            is_flag=True
+        )
+    ] = False,
+    to_skip: Annotated[ 
+        list[str],
+        Option(
+            "--skip",
+            "-s",
+            help="Skip one or more directories or files within the target directory. The path should be relative to the target directory (e.g. `testfile.txt` and not `data/testfile.txt` if `data` is the target directory). Can be used multiple times. Defaults to an empty list. Used only if `--recursive` is set."
+        )
+    ] = [],
+) -> None:
+    asyncio.run(parse_and_cache(directory, recursive, to_skip))
+
+@app.command(
+    name="get-cached",
+    help="Get the content of a cached file, if it exists",
+)
+def get_cached(
+    file: Annotated[ 
+        str,
+        Option(
+            "--file",
+            "-f",
+            help="The cached file whose content should be retrieved",
+        )
+    ],
+    max_chars: Annotated[ 
+        int,
+        Option(
+            "--max",
+            "-m",
+            help="Max charachters to display. Defaults to 10.000"
+        )
+    ] = 10000,
+) -> None:
+    content = CACHE.get_file(file)
+    console = Console()
+    if content is not None:
+        content = content[:max_chars]+"\n\nCONTINUES..." if len(content) > max_chars else content
+        markdown = Markdown(content)
+        panel = Panel(
+            markdown,
+            title_align="left",
+            title=f"Content for {file}",
+            border_style="bold",
+        )
+        console.print(panel)
+    else:
+        console.print(f"[bold yellow]No cached content for {file}[/]")
