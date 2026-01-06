@@ -11,6 +11,7 @@ from llama_cloud_services import LlamaParse
 
 CACHING_DIR = Path("tmp/cache")
 
+
 class ParsedFileCache:
     def __init__(self) -> None:
         self._cache = Cache(directory=str(CACHING_DIR))
@@ -21,7 +22,7 @@ class ParsedFileCache:
             os.makedirs(CACHING_DIR, exist_ok=True)
             self._is_warmed_up = True
         return None
-    
+
     @property
     def is_empty(self) -> bool:
         return len(list(self._cache.iterkeys())) == 0
@@ -29,15 +30,17 @@ class ParsedFileCache:
     def add_file(self, file_path: str, content: str) -> None:
         resolved_path = str(Path(file_path).resolve())
         self._cache.add(resolved_path, content)
-    
+
     def get_file(self, file_path: str) -> str | None:
         resolved_path = str(Path(file_path).resolve())
         return cast(str | None, self._cache.get(resolved_path))
-    
+
     def close(self) -> None:
         self._cache.close()
-    
+
+
 CACHE = ParsedFileCache()
+
 
 async def parse_and_cache(directory: str, recursive: bool, to_skip: list[str]) -> None:
     logging.basicConfig(
@@ -59,8 +62,16 @@ async def parse_and_cache(directory: str, recursive: bool, to_skip: list[str]) -
     else:
         files = []
         for root, dirs, fls in os.walk(dir_path):
-            dirs[:] = [str((Path(root) / d).resolve()) for d in dirs if d not in to_skip_resolved]
-            fls[:] = [str((Path(root) / f).resolve()) for f in fls if f not in to_skip_resolved]
+            dirs[:] = [
+                str((Path(root) / d).resolve())
+                for d in dirs
+                if d not in to_skip_resolved
+            ]
+            fls[:] = [
+                str((Path(root) / f).resolve())
+                for f in fls
+                if f not in to_skip_resolved
+            ]
             for fl in fls:
                 files.append(str((Path(root) / fl).resolve()))
     semaphore = asyncio.Semaphore(5)
@@ -69,6 +80,7 @@ async def parse_and_cache(directory: str, recursive: bool, to_skip: list[str]) -
         result_type=ResultType.TXT,
         fast_mode=True,
     )
+
     async def parse_job(file_path: str) -> None:
         async with semaphore:
             result = cast(JobResult, await parser.aparse(file_path=file_path))
@@ -76,8 +88,8 @@ async def parse_and_cache(directory: str, recursive: bool, to_skip: list[str]) -
                 text = await result.aget_text()
                 CACHE.add_file(file_path, text)
             else:
-                logging.info(f"Could not parse file {file_path} because of {result.error}")
+                logging.info(
+                    f"Could not parse file {file_path} because of {result.error}"
+                )
+
     await asyncio.gather(*(parse_job(file) for file in files))
-
-
-
