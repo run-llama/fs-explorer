@@ -9,6 +9,7 @@ test:
 lint:
 	$(info ****************** linting ******************)
 	uv run pre-commit run -a
+	uv run ruff check --fix
 
 format:
 	$(info ****************** formatting ******************)

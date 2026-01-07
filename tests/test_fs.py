@@ -1,7 +1,6 @@
 import pytest
 import os
 
-from unittest.mock import patch
 from fs_explorer.fs import (
     describe_dir_content,
     read_file,
@@ -18,7 +17,7 @@ def test_describe_dir_content() -> None:
         == "Content of tests/testfiles\nFILES:\n- tests/testfiles/file1.txt\n- tests/testfiles/file2.md\nSUBFOLDERS:\n- tests/testfiles/last"
     )
     description = describe_dir_content("tests/testfile")
-    assert description == f"No such directory: tests/testfile"
+    assert description == "No such directory: tests/testfile"
     description = describe_dir_content("tests/testfiles/last")
     assert (
         description
