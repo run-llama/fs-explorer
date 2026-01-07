@@ -11,3 +11,8 @@ wheels/
 
 # caches
 *_cache/
+tmp/
+qdrant_storage/
+
+# logs
+fs-explorer.log

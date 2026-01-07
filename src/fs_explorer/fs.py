@@ -6,6 +6,7 @@ from typing import cast
 from llama_cloud_services.parse.utils import ResultType
 from llama_cloud_services.parse.types import JobResult
 from llama_cloud_services import LlamaParse
+from .caching import CACHE, CACHING_DIR
 
 
 def describe_dir_content(directory: str) -> str:
@@ -60,18 +61,27 @@ def glob_paths(directory: str, pattern: str) -> str:
 
 
 def check_api_key() -> str:
-    return (
-        "LLAMA_CLOUD_API_KEY is set and you can use the 'parse_file' tool"
-        if os.getenv("LLAMA_CLOUD_API_KEY") is not None
-        else "LLAMA_CLOUD_API_KEY is not set and you cannot use the 'parse_file' tool"
-    )
+    message = ""
+    if os.getenv("LLAMA_CLOUD_API_KEY") is not None:
+        message += "LLAMA_CLOUD_API_KEY is set and you can use the 'parse_file' tool"
+        if CACHING_DIR.is_dir():
+            message += " in all its functionalities"
+        return message
+    else:
+        if CACHING_DIR.is_dir():
+            message += "LLAMA_CLOUD_API_KEY is not set and you can use 'parse_file', but you will only have access to cached files. You should try to use the tool nevertheless."
+        else:
+            message += "LLAMA_CLOUD_API_KEY is not set and you cannot use the 'parse_file' tool"
+        return message
 
 
 async def parse_file(file_path: str) -> str:
     if not os.path.exists(file_path) or not os.path.isfile(file_path):
         return f"No such file: {file_path}"
+    if (content := CACHE.get_file(file_path)) is not None:
+        return content
     if os.getenv("LLAMA_CLOUD_API_KEY") is None:
-        return f"Not possible to parse {file_path} as the necessary credentials (`LLAMA_CLOUD_API_KEY`) are not set in the environment"
+        return f"Not possible to parse {file_path} because it has not been cached and the necessary credentials (`LLAMA_CLOUD_API_KEY`) are not set in the environment"
     parser = LlamaParse(
         api_key=cast(str, os.getenv("LLAMA_CLOUD_API_KEY")),
         result_type=ResultType.TXT,

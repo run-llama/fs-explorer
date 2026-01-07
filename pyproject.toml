@@ -9,6 +9,7 @@ description = "Explore and understand your filesystem better with AI."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "diskcache>=5.6.3",
     "google-genai>=1.55.0",
     "llama-cloud-services>=0.6.88",
     "llama-index-workflows>=2.11.5",
@@ -17,6 +18,15 @@ dependencies = [
 
 [tool.uv.build-backend]
 module-name = "fs_explorer"
+
+[tool.uv.workspace]
+members = [
+    "packages/rag-starterkit",
+    "packages/eval-framework",
+]
+
+[tool.uv.sources]
+rag-starterkit = {workspace = true}
 
 [dependency-groups]
 dev = [

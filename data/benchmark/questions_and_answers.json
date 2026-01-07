@@ -1,0 +1,27 @@
+[
+    {
+        "question": "What is the key takeway (and/or term revisiting) for memory and learning from a nested learning perspective?", 
+        "answer": "Key takeaway (Nested Learning perspective): From a nested learning (NL) viewpoint, memory and learning are not separate modules. Instead, memory is any neural parameter update caused by input, and learning is the process of acquiring, encoding, and organizing these memories effectively. All updates—across different levels of the learning hierarchy and at different frequencies—constitute memory, stored on multiple time scales. This distributed, continuum view aligns with neuropsychology and reframes gradient-based optimization itself as a form of (associative) memory, enabling more robust behavior and mitigating catastrophic forgetting.", 
+        "file": "nested_learning.pdf"
+    },
+    {
+        "question": "What is the architecture of the DeepEncoder in DeepSeek OCR?",
+        "answer": "DeepEncoder uses a two-stage architecture: first, a window-attention-based visual perception module (SAM-base) to extract local image features, and second, a global-attention-based visual knowledge module (CLIP-large) to capture global semantics. Between them, a 2-layer convolutional downsampling module compresses vision tokens (from 4096 to 256 for a 1024x1024 image), keeping computation and memory manageable while preserving important information.",
+        "file": "deepseek_ocr.pdf"
+    },
+    {
+        "question": "What related work in the field of Byte-Level LMs do the author of the BOLMO paper individuate?",
+        "answer": "The authors point to byte-level LMs that replace subwords with UTF-8 bytes, especially Latent Tokenizer Language Models (LTLMs) such as Hourglass-style models that use pooling, depooling, and dynamic, learned tokenization, which can match subword models at similar compute.",
+        "file": "bolmo.pdf"
+    },
+    {
+        "question": "What datasets was MUVERA evaluated on?",
+        "answer": "MUVERA's evaluation includes results from six of the well-studied BEIR information retrieval datasets: MS MARCO, HotpotQA, NQ, Quora, SciDocs, and ArguAna. These datasets were selected for varying corpus size (8K-8.8M) and average number of document tokens (18-165).",
+        "file": "muvera.pdf"
+    }, 
+    {
+        "question": "What limitations and future work perspectives are outlined for Recursive Language Models?",
+        "answer": "Limitations and future work for RLMs include exploring asynchronous or sandboxed sub-calls to reduce inference cost, deeper recursion beyond a single sub-call, and training models specifically as RLMs to improve reasoning and context efficiency.",
+        "file": "recursive_language_models.pdf"
+    }
+]
