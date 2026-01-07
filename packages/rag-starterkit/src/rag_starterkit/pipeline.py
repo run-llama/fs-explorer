@@ -15,6 +15,7 @@ class Pipeline:
         self,
         qdrant_client: AsyncQdrantClient,
         qdrant_collection_name: str,
+        rrf_constant: int = 60,
         parsing_kwargs: dict[str, Any] | None = None,
         cache_directory: str | None = None,
         openai_api_key: str | None = None,
@@ -50,6 +51,7 @@ class Pipeline:
             qdrant_client=qdrant_client,
             collection_name=qdrant_collection_name,
             embedder=self.embedder,
+            rrf_constant=rrf_constant,
         )
         self.filter_llm = LLMFilter(api_key=openai_api_key, model=openai_llm_model)
         self.file_paths: list[str] = []
