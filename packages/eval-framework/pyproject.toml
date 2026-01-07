@@ -1,0 +1,26 @@
+[build-system]
+requires = ["uv_build>=0.9.10,<0.10.0"]
+build-backend = "uv_build"
+
+[project]
+name = "eval-framework"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fs-explorer",
+    "rag-starterkit",
+    "typer>=0.20.0",
+]
+
+[tool.uv.sources]
+rag-starterkit = { workspace = true }
+fs-explorer = { workspace = true }
+
+[tool.uv.build-backend]
+module-name = "eval_framework"
+
+[project.scripts]
+run-eval = "eval_framework.main:app_eval"
+get-stats = "eval_framework.main:app_stats"

@@ -15,7 +15,6 @@ dependencies = [
     "llama-cloud-services>=0.6.88",
     "openai>=2.14.0",
     "qdrant-client>=1.16.2",
-    "typer>=0.20.0",
 ]
 
 [tool.uv.build-backend]

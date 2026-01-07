@@ -1,5 +1,6 @@
 from openai import AsyncOpenAI
 from openai.types.responses.easy_input_message_param import EasyInputMessageParam
+from pathlib import Path
 from typing import Any
 from pydantic import BaseModel, Field
 
@@ -20,6 +21,10 @@ class FileFilter(BaseModel):
     )
 
 
+class GroundedResponse(BaseModel):
+    response: str = Field(description="Response based on the provided context")
+
+
 class LLMFilter:
     def __init__(self, api_key: str, model: str | None = None):
         self._client = AsyncOpenAI(api_key=api_key)
@@ -28,8 +33,13 @@ class LLMFilter:
     def _build_user_message(
         self, query: str, file_paths: list[str]
     ) -> EasyInputMessageParam:
+        file_paths = [str(Path(file_path).resolve()) for file_path in file_paths]
         fls = "\n- ".join(file_paths)
         content = f"Find, among these files:\n\n- {fls}\n\nThe one that would be the most likely to contain the answer to this query: '{query}'"
+        return EasyInputMessageParam(role="user", content=content, type="message")
+
+    def _build_context_message(self, query: str, context: str) -> EasyInputMessageParam:
+        content = f"Based on this context: '{context}' provide a reponse to this query: '{query}'"
         return EasyInputMessageParam(role="user", content=content, type="message")
 
     async def generate_filter(
@@ -42,6 +52,19 @@ class LLMFilter:
         response = await self._client.responses.parse(
             text_format=FileFilter,
             input=messages,
+            model=self.model,
+        )
+        return response.output_parsed
+
+    async def generate_response(
+        self,
+        query: str,
+        context: str,
+    ) -> GroundedResponse | None:
+        message = self._build_context_message(query, context)
+        response = await self._client.responses.parse(
+            text_format=GroundedResponse,
+            input=[message],
             model=self.model,
         )
         return response.output_parsed

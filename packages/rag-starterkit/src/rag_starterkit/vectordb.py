@@ -106,6 +106,12 @@ class VectorDB:
                 },
             )
 
+    async def check_if_loaded(self) -> bool:
+        if not await self._client.collection_exists(self.collection_name):
+            return False
+        collection = await self._client.get_collection(self.collection_name)
+        return collection.points_count is not None and collection.points_count > 0
+
     async def upload(self, data: list[ChunkWithMetadata]) -> None:
         sparse_embeddings: list[dict[str, SparseVector]] = []
         dense_embeddings: list[dict[str, list[float]]] = []

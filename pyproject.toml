@@ -22,6 +22,7 @@ module-name = "fs_explorer"
 [tool.uv.workspace]
 members = [
     "packages/rag-starterkit",
+    "packages/eval-framework",
 ]
 
 [tool.uv.sources]
