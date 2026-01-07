@@ -66,12 +66,12 @@ async def parse_and_cache(directory: str, recursive: bool, to_skip: list[str]) -
                 str((Path(root) / d).resolve())
                 for d in dirs
                 if d not in to_skip_resolved
-            ] # type: ignore[invalid-assignment]
+            ]  # type: ignore[invalid-assignment]
             fls[:] = [
                 str((Path(root) / f).resolve())
                 for f in fls
                 if f not in to_skip_resolved
-            ] # type: ignore[invalid-assignment]
+            ]  # type: ignore[invalid-assignment]
             for fl in fls:
                 files.append(str((Path(root) / fl).resolve()))
     semaphore = asyncio.Semaphore(5)

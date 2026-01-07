@@ -70,5 +70,5 @@ async def test_parse_file_without_api_key() -> None:
     content = await parse_file("data/testfile.txt")
     assert (
         content
-        == "Not possible to parse data/testfile.txt as the necessary credentials (`LLAMA_CLOUD_API_KEY`) are not set in the environment"
+        == "Not possible to parse data/testfile.txt because it has not been cached and the necessary credentials (`LLAMA_CLOUD_API_KEY`) are not set in the environment"
     )
