@@ -15,6 +15,13 @@ FS_EXPLORER_PROMPT = Template(
     "Search the answer to the following question: '{{question}}' by using one of the PDF files available in the current directory. In your final response, you must report the answer to the question. In this task, you MUST NOT ask for any human assistance and you MUST ONLY use tool calling."
 )
 
+FS_EXPLORER_PROMPT_ADVANCED = Template(
+    "Search the answer to the following question: '{{question}}' by using one of the text files available in the `./texts` directory. In order to understand what file you should be using, please consult the `metadata.jsonl` file. In your final response, you must report the answer to the question. In this task, you MUST NOT ask for any human assistance and you MUST ONLY use tool calling."
+)
+
+QDRANT_COLLECTION = "rag-benchmark"
+QDRANT_COLLECTION_ADVANCED = "rag-benchmark-advanced"
+
 
 class RunResult(TypedDict):
     time_taken: float
@@ -24,8 +31,13 @@ class RunResult(TypedDict):
     file_path: str | list[str] | None
 
 
-async def run_workflow(question: str) -> RunResult:
-    start_event = InputEvent(task=FS_EXPLORER_PROMPT.render({"question": question}))
+async def run_workflow(question: str, advanced: bool = False) -> RunResult:
+    if not advanced:
+        start_event = InputEvent(task=FS_EXPLORER_PROMPT.render({"question": question}))
+    else:
+        start_event = InputEvent(
+            task=FS_EXPLORER_PROMPT_ADVANCED.render({"question": question})
+        )
     tool_calls = []
     file_names: list[str] = []
     start_time = time.time()
@@ -34,6 +46,14 @@ async def run_workflow(question: str) -> RunResult:
         if isinstance(event, ToolCallEvent):
             tool_calls.append(event.tool_name)
             if event.tool_name == "parse_file":
+                file_name = event.tool_input.get("file_path")
+                if file_name is not None:
+                    file_names.append(file_name)
+            if event.tool_name == "read":
+                file_name = event.tool_input.get("file_path")
+                if file_name is not None:
+                    file_names.append(file_name)
+            if event.tool_name == "grep":
                 file_name = event.tool_input.get("file_path")
                 if file_name is not None:
                     file_names.append(file_name)
@@ -51,12 +71,16 @@ async def run_workflow(question: str) -> RunResult:
 
 PIPELINE = Pipeline(
     qdrant_client=AsyncQdrantClient(location="http://localhost:6333"),
-    qdrant_collection_name="rag-benchmark",
+    qdrant_collection_name=QDRANT_COLLECTION,
     cache_directory="tmp/cache",
 )
 
 
-async def run_pipeline(question: str) -> RunResult:
+async def run_pipeline(question: str, advanced: bool = False) -> RunResult:
+    if advanced:
+        PIPELINE.vector_db.collection_name = QDRANT_COLLECTION_ADVANCED
+        PIPELINE.vector_db.sparse_only = True
+        PIPELINE.sparse_only = True
     await PIPELINE.prepare()
     start_time = time.time()
     try:

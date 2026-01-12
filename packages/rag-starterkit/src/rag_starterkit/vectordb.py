@@ -66,6 +66,8 @@ class SimpleReranker:
         sparse_results: list[SearchResult],
         limit: int = 1,
     ) -> list[SearchResult]:
+        if len(dense_results) == 0:
+            return sparse_results[:limit]
         rrf_scores = self._reciprocal_rank_fusion(dense_results, sparse_results)
         results_map = self._dedupe_and_merge(dense_results, sparse_results)
         reranked_results: list[SearchResult] = []
@@ -84,27 +86,37 @@ class VectorDB:
         collection_name: str,
         embedder: Embedder,
         rrf_constant: int = 60,
+        sparse_only: bool = False,
     ) -> None:
         self._client = qdrant_client
         self.collection_name = collection_name
         self.embedder = embedder
+        self.sparse_only = sparse_only
         self._reranker = SimpleReranker(k=rrf_constant)
 
     async def configure_collection(self) -> None:
         if await self._client.collection_exists(self.collection_name):
             return None
         else:
-            await self._client.create_collection(
-                collection_name=self.collection_name,
-                vectors_config={
-                    "dense-text": VectorParams(size=768, distance=Distance.COSINE)
-                },
-                sparse_vectors_config={
-                    "sparse-text": SparseVectorParams(
-                        index=SparseIndexParams(on_disk=False)
-                    )
-                },
-            )
+            vectors_config = {
+                "dense-text": VectorParams(size=768, distance=Distance.COSINE)
+            }
+            sparse_vectors_config = {
+                "sparse-text": SparseVectorParams(
+                    index=SparseIndexParams(on_disk=False)
+                )
+            }
+            if not self.sparse_only:
+                await self._client.create_collection(
+                    collection_name=self.collection_name,
+                    vectors_config=vectors_config,
+                    sparse_vectors_config=sparse_vectors_config,
+                )
+            else:
+                await self._client.create_collection(
+                    collection_name=self.collection_name,
+                    sparse_vectors_config=sparse_vectors_config,
+                )
 
     async def check_if_loaded(self) -> bool:
         if not await self._client.collection_exists(self.collection_name):
@@ -124,17 +136,19 @@ class VectorDB:
                     values=d["sparse_embedding"].values.tolist(),
                 )
             }
-            dense_embedding = {"dense-text": d["embedding"]}
-            payload = {"content": d["chunk"].text, "file_path": d["file_path"]}
             sparse_embeddings.append(sparse_embedding)
-            dense_embeddings.append(dense_embedding)
+            if not self.sparse_only:
+                dense_embedding = {"dense-text": d["embedding"]}
+                dense_embeddings.append(dense_embedding)
+            payload = {"content": d["chunk"].text, "file_path": d["file_path"]}
             payloads.append(payload)
-        self._client.upload_collection(
-            self.collection_name,
-            vectors=dense_embeddings,
-            payload=payloads,
-            ids=range(len(dense_embeddings)),
-        )
+        if not self.sparse_only:
+            self._client.upload_collection(
+                self.collection_name,
+                vectors=dense_embeddings,
+                payload=payloads,
+                ids=range(len(dense_embeddings)),
+            )
         self._client.upload_collection(
             self.collection_name,
             vectors=sparse_embeddings,
@@ -147,20 +161,33 @@ class VectorDB:
     async def search(
         self, query: str, file_path: str | None = None, limit: int = 1
     ) -> list[SearchResult]:
-        dense_embedding = await self.embedder.embed_query(query)
-        sparse_embedding = self.embedder.sparse_embed_query(query)
+        dense_results: list[SearchResult] = []
+        sparse_results: list[SearchResult] = []
         if file_path:
             filt = Filter(
                 must=FieldCondition(key="file_path", match=MatchValue(value=file_path))
             )
         else:
             filt = None
-        result_dense = await self._client.query_points(
-            collection_name=self.collection_name,
-            query=dense_embedding,
-            using="dense-text",
-            query_filter=filt,
-        )
+        if not self.sparse_only:
+            dense_embedding = await self.embedder.embed_query(query)
+            result_dense = await self._client.query_points(
+                collection_name=self.collection_name,
+                query=dense_embedding,
+                using="dense-text",
+                query_filter=filt,
+            )
+            for point in result_dense.points:
+                if point.payload is not None:
+                    result = SearchResult(
+                        id=cast(int, point.id),
+                        content=point.payload.get("content", ""),
+                        file_path=point.payload.get("file_path", ""),
+                        score=point.score,
+                        type="dense",
+                    )
+                    dense_results.append(result)
+        sparse_embedding = self.embedder.sparse_embed_query(query)
         result_sparse = await self._client.query_points(
             collection_name=self.collection_name,
             query=SparseVector(
@@ -170,18 +197,6 @@ class VectorDB:
             using="sparse-text",
             query_filter=filt,
         )
-        dense_results: list[SearchResult] = []
-        sparse_results: list[SearchResult] = []
-        for point in result_dense.points:
-            if point.payload is not None:
-                result = SearchResult(
-                    id=cast(int, point.id),
-                    content=point.payload.get("content", ""),
-                    file_path=point.payload.get("file_path", ""),
-                    score=point.score,
-                    type="dense",
-                )
-                dense_results.append(result)
         for point in result_sparse.points:
             if point.payload is not None:
                 result = SearchResult(

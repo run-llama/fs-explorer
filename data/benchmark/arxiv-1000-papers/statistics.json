@@ -1,0 +1,19 @@
+{
+  "time_stats": {
+    "fs_explorer": 32.99757990837097,
+    "rag": 8.037023305892944,
+    "best": "rag"
+  },
+  "llm_stats": {
+    "fs_explorer": {
+      "correctness": 9.2,
+      "relevance": 10
+    },
+    "rag": {
+      "correctness": 9.25,
+      "relevance": 10
+    },
+    "best_correctness": "rag",
+    "best_relevance": "rag"
+  }
+}

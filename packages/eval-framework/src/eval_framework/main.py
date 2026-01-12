@@ -19,6 +19,13 @@ def run_evaluations(
             help="JSON file containing the questions and answers dataset",
         ),
     ],
+    advanced: Annotated[
+        bool,
+        Option(
+            "--advanced/--no-advanced",
+            help="Whether or not to run the evaluation in advanced mode.",
+        ),
+    ] = False,
     results_file: Annotated[
         str,
         Option(
@@ -28,7 +35,11 @@ def run_evaluations(
         ),
     ] = "results.json",
 ) -> None:
-    asyncio.run(run_evaluation(dataset_file=dataset_file, results_file=results_file))
+    asyncio.run(
+        run_evaluation(
+            dataset_file=dataset_file, results_file=results_file, advanced=advanced
+        )
+    )
 
 
 @app_stats.command()

@@ -16,6 +16,7 @@ class Pipeline:
         qdrant_client: AsyncQdrantClient,
         qdrant_collection_name: str,
         rrf_constant: int = 60,
+        sparse_embeddings_only: bool = False,
         parsing_kwargs: dict[str, Any] | None = None,
         cache_directory: str | None = None,
         openai_api_key: str | None = None,
@@ -52,9 +53,11 @@ class Pipeline:
             collection_name=qdrant_collection_name,
             embedder=self.embedder,
             rrf_constant=rrf_constant,
+            sparse_only=sparse_embeddings_only,
         )
         self.filter_llm = LLMFilter(api_key=openai_api_key, model=openai_llm_model)
         self.file_paths: list[str] = []
+        self.sparse_only = sparse_embeddings_only
         self.is_ready = False
 
     async def prepare(self) -> None:
@@ -67,7 +70,8 @@ class Pipeline:
             contents = cast(dict[str, str], contents)
             self.file_paths = [key for key in contents]
             chunks = self.chunker.chunk_texts(contents)
-            chunks = await self.embedder.embed_chunks(chunks)
+            if not self.sparse_only:
+                chunks = await self.embedder.embed_chunks(chunks)
             chunks = self.embedder.sparse_embed_chunks(chunks)
             await self.vector_db.configure_collection()
             await self.vector_db.upload(chunks)

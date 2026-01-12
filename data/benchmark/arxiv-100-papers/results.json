@@ -1,0 +1,200 @@
+[
+  {
+    "task": {
+      "question": "How does parallel processing in neural network hardware accelerators affect the effectiveness of correlation-based side-channel power analysis attacks?",
+      "answer": "Parallel processing in hardware accelerators causes multiple neurons in the same fully-connected layer to perform multiply-and-accumulate operations simultaneously on the same input, which aggregates their power consumption. This concurrency reduces the observable correlation between individual operations and the measured power trace, thereby decreasing the success rate of correlation power analysis attacks. The study derives equations showing that correlation decreases as the level of parallelism increases, and validates these findings using an FPGA-based vector-multiplication unit.",
+      "file": "texts/Influence of Parallelism in Vector-Multiplication Units on Correlation Power Analysis.txt"
+    },
+    "tool_calls": [
+      "read",
+      "glob",
+      "read"
+    ],
+    "llm_evaluations": {
+      "fs_explorer": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The provided answer captures the core mechanism and conclusion from the ground truth: simultaneous MAC operations aggregate power, reducing observable correlation and lowering CPA success as parallelism increases. It omits secondary details (derivation of equations and FPGA validation), so it\u2019s slightly less complete, but still correct on the main point."
+      },
+      "rag": {
+        "relevance": 10,
+        "correctness": 10,
+        "reason": "The proposed answer matches the ground truth closely: it explains that parallel MAC operations from multiple neurons on the same input aggregate/overlap power, reducing per-operation correlation and CPA success. It also mentions the derived equations showing correlation decreases with increased parallelism and the FPGA vector-multiplication validation. No material omissions or inaccuracies relative to the ground truth."
+      }
+    },
+    "used_files": {
+      "fs_explorer": [],
+      "rag": "/Users/clee/Desktop/code-projects/fs-explorer/data/benchmark/arxiv-100-papers/texts/Influence of Parallelism in Vector-Multiplication Units on Correlation Power Analysis.txt"
+    },
+    "has_error": {
+      "fs_explorer": false,
+      "rag": false
+    },
+    "time_taken": {
+      "fs_explorer": 11.672821044921875,
+      "rag": 9.38922119140625
+    },
+    "answers": {
+      "fs_explorer": "Parallel processing in neural network hardware accelerators, specifically when neurons in the same fully-connected layer simultaneously process the same input value via concurrent multiply-and-accumulate operations, reduces the effectiveness of correlation-based side-channel power analysis attacks. This increase in parallelism causes the correlation between the predicted and actual power consumption to decrease, thereby lowering the attack's success rate.",
+      "rag": "Parallel processing in neural network hardware accelerators can reduce the effectiveness of correlation-based side-channel power analysis attacks. This is because, when multiple neurons in the same fully-connected layer process the same input in parallel (such as through concurrent multiply-and-accumulate operations), the power consumption patterns from each operation overlap and mix together. This overlapping makes it more difficult for an attacker to correlate the observed power traces with the values being processed by any individual neuron, thereby decreasing the signal-to-noise ratio of the leaked information.\n\nAccording to the context, as the level of parallelism increases, the correlation between the observed power traces and specific operations performed by the hardware diminishes. The paper even derives equations that describe how this correlation drops with higher degrees of parallel processing, effectively reducing the success rate of correlation power analysis attacks. These findings were also validated experimentally using an FPGA implementation of a vector-multiplication unit, confirming that increased parallelism in hardware accelerators can offer a form of intrinsic resistance against this type of side-channel attack."
+    }
+  },
+  {
+    "task": {
+      "question": "How does CHDP address the challenges of learning and optimizing policies in hybrid discrete-continuous action spaces?",
+      "answer": "CHDP frames the hybrid action space problem as a fully cooperative game between two agents: one using a discrete diffusion policy and the other using a continuous diffusion policy. The continuous policy is conditioned on the discrete action representation to explicitly model their dependency. To avoid update conflicts, CHDP applies a sequential update scheme that promotes co-adaptation. For scalability in high-dimensional discrete spaces, it introduces a codebook that embeds discrete actions into a low-dimensional latent space, along with a Q-function-based guidance mechanism to align the embeddings with the discrete policy. This design improves expressiveness, scalability, and performance, outperforming prior methods by up to 19.3% in success rate.",
+      "file": "texts/CHDP: Cooperative Hybrid Diffusion Policies for Reinforcement Learning in Parameterized Action Space.txt"
+    },
+    "tool_calls": [
+      "read",
+      "read"
+    ],
+    "llm_evaluations": {
+      "fs_explorer": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The proposed answer matches the ground truth\u2019s key points: cooperative game formulation with discrete and continuous diffusion policies, conditioning of the continuous policy on the discrete representation, sequential updates to avoid conflicts and encourage co-adaptation, and the codebook + Q-guidance for scalability and alignment. The only notable omission is the quantitative performance claim (e.g., up to 19.3% success-rate improvement), so it\u2019s highly correct but not perfectly complete."
+      },
+      "rag": {
+        "relevance": 10,
+        "correctness": 10,
+        "reason": "The provided answer matches the ground truth on all key points: cooperative two-agent framing, discrete/continuous diffusion policies, conditioning continuous on discrete representation, sequential updates to avoid conflicts, codebook-based low-dimensional embedding for scalable discrete actions, and Q-guidance to align embeddings. It omits the specific numeric improvement (up to 19.3%), but this is a minor detail; overall it is fully relevant and technically accurate."
+      }
+    },
+    "used_files": {
+      "fs_explorer": [],
+      "rag": "/Users/clee/Desktop/code-projects/fs-explorer/data/benchmark/arxiv-100-papers/texts/CHDP: Cooperative Hybrid Diffusion Policies for Reinforcement Learning in Parameterized Action Space.txt"
+    },
+    "has_error": {
+      "fs_explorer": false,
+      "rag": false
+    },
+    "time_taken": {
+      "fs_explorer": 11.654190063476562,
+      "rag": 11.9148268699646
+    },
+    "answers": {
+      "fs_explorer": "CHDP addresses the challenges of learning and optimizing policies in hybrid discrete-continuous action spaces by treating the problem as a fully cooperative game. It employs two cooperative agents\u2014one using a discrete diffusion policy and the other a continuous diffusion policy\u2014where the continuous policy is conditioned on the discrete action's representation to model dependencies. To address specific challenges, CHDP uses: 1) A sequential update scheme to mitigate conflicts during simultaneous updates and foster co-adaptation; 2) A codebook to embed high-dimensional discrete action spaces into a low-dimensional latent space for better scalability; and 3) A Q-function-based guidance mechanism to align the codebook's embeddings with the discrete policy's representation during training.",
+      "rag": "CHDP addresses the challenges of learning and optimizing policies in hybrid discrete-continuous action spaces through several key mechanisms:\n\n1. **Cooperative Agents**: It employs two cooperative agents\u2014one responsible for discrete actions and the other for continuous parameters. This separation allows each agent to specialize and leverage expressiveness appropriate to its subspace.\n\n2. **Dependency Modeling**: The continuous policy is conditioned on the representation of the selected discrete action, enabling the model to capture and explicitly represent dependencies between discrete and continuous choices.\n\n3. **Diffusion Policies**: Both policies utilize diffusion models, which are well-suited for capturing complex, multimodal distributions, increasing overall policy expressiveness.\n\n4. **Sequential Policy Updates**: By updating discrete and continuous policies sequentially rather than simultaneously, CHDP mitigates update conflicts and encourages co-adaptation, improving stability and learning efficiency.\n\n5. **Latent Codebook for Discrete Actions**: To improve scalability in high-dimensional discrete spaces, CHDP embeds discrete actions into a compact, low-dimensional latent space via a codebook, making learning more efficient and structured.\n\n6. **Q-Function-Based Guidance**: A Q-function aligns the codebook embeddings with the representations learned by the discrete policy, ensuring the latent space remains meaningful and useful during training.\n\nThese innovations collectively help CHDP overcome traditional limitations in expressiveness and scalability, resulting in superior performance in challenging hybrid action benchmarks."
+    }
+  },
+  {
+    "task": {
+      "question": "What impact do medical personas and interaction styles have on the safety and performance of large language models in clinical decision-making?",
+      "answer": "Medical personas act as behavioral priors that produce context-dependent and non-monotonic effects in clinical LLMs. They improve accuracy and calibration in critical care tasks by up to about 20%, but can significantly degrade performance in primary-care settings. Interaction styles influence risk-taking and sensitivity, though their effects vary by model. While automated evaluations tend to favor medical personas in safety-critical scenarios, human clinicians show only moderate agreement on safety compliance and report low confidence in reasoning quality, indicating that personas introduce trade-offs rather than guaranteed safety or expertise.",
+      "file": "texts/The Persona Paradox: Medical Personas as Behavioral Priors in Clinical Language Models.txt"
+    },
+    "tool_calls": [
+      "read",
+      "read"
+    ],
+    "llm_evaluations": {
+      "fs_explorer": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The proposed answer closely matches the ground truth: it identifies personas/interaction styles as behavioral priors with context-dependent, non-monotonic effects; notes ~20% gains in accuracy/calibration in critical care and degradation in primary care; and describes interaction-style effects on risk-taking varying by model. It also captures the discrepancy between automated evaluations and clinician judgments, including low confidence in reasoning quality. Minor omission: it doesn\u2019t explicitly mention only \u201cmoderate agreement\u201d among clinicians on safety compliance, but the overall substance is accurate."
+      },
+      "rag": {
+        "relevance": 10,
+        "correctness": 10,
+        "reason": "The answer closely matches the ground truth: it describes personas as producing complex, context-dependent/non-monotonic effects; notes up to ~20% improvements in accuracy/calibration in critical care; highlights degraded performance in primary care; explains interaction-style effects on risk-taking/sensitivity varying by model; and contrasts automated evaluations favoring personas with only moderate clinician agreement and low confidence in reasoning quality. No substantive omissions or contradictions."
+      }
+    },
+    "used_files": {
+      "fs_explorer": [],
+      "rag": "/Users/clee/Desktop/code-projects/fs-explorer/data/benchmark/arxiv-100-papers/texts/The Persona Paradox: Medical Personas as Behavioral Priors in Clinical Language Models.txt"
+    },
+    "has_error": {
+      "fs_explorer": false,
+      "rag": false
+    },
+    "time_taken": {
+      "fs_explorer": 9.562525987625122,
+      "rag": 7.819545745849609
+    },
+    "answers": {
+      "fs_explorer": "Medical personas and interaction styles function as behavioral priors for LLMs in clinical decision-making, but they introduce context-dependent trade-offs rather than consistent improvements. Medical personas (e.g., ED physician, nurse) improve performance in critical care tasks, with accuracy and calibration gains of up to ~+20%, yet they degrade performance in primary-care settings by similar margins. Interaction styles (bold vs. cautious) modulate a model's risk propensity and sensitivity, though this effect varies significantly between different models. Overall, while LLM-based evaluations favor medical personas in safety-critical cases, human clinicians report low confidence in the reasoning quality provided, indicating that personas do not provide a monotonic guarantee of safety or expertise.",
+      "rag": "Medical personas and interaction styles have significant, but complex, impacts on the safety and performance of large language models (LLMs) in clinical decision-making. According to the provided context, assigning medical personas (such as Emergency Department physician or nurse) to LLMs generally improves their accuracy and calibration in safety-critical, high-stakes clinical tasks\u2014sometimes by as much as 20%. This suggests that personas can enhance the model's performance where clinical expertise is crucial, such as critical care scenarios.\n\nHowever, these benefits are not uniform or monotonic. In primary-care settings, medical personas can actually degrade LLM performance by comparable margins, indicating a context-dependent effect. Interaction styles (bold versus cautious communication) further influence the model's risk behavior and sensitivity, but the impact of these styles varies significantly depending on the specific LLM used.\n\nFinally, while automated LLM-judge rankings tend to prefer medical personas in safety-critical tasks, human clinical evaluators show only moderate agreement on whether the responses are safe, and they express low confidence in most assessments of reasoning quality. This demonstrates that persona conditioning introduces context-dependent trade-offs: while it can guide LLMs toward more expert-like and safer responses in some settings, it does not offer a universal guarantee of improved safety or expertise across all clinical scenarios."
+    }
+  },
+  {
+    "task": {
+      "question": "How effective is a Vision Transformer-based deep learning model for segmenting pancreatic tumors in endoscopic ultrasound images?",
+      "answer": "The Vision Transformer-based segmentation model demonstrates strong and consistent performance on public EUS datasets. Trained and validated on over 17,000 images, it achieved mean Dice similarity coefficients around 0.65, high specificity (over 97%), and accuracy above 97% in both cross-validation and external testing. While results indicate robust tumor segmentation capability, challenges such as dataset heterogeneity, occasional erroneous multiple predictions, and limited external validation suggest that further refinement and prospective evaluation are needed before clinical deployment.",
+      "file": "texts/Performance of a Deep Learning-Based Segmentation Model for Pancreatic Tumors on Public Endoscopic Ultrasound Datasets.txt"
+    },
+    "tool_calls": [
+      "read",
+      "glob",
+      "read"
+    ],
+    "llm_evaluations": {
+      "fs_explorer": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The proposed answer closely matches the ground truth: it reports similar mean Dice (~0.65), high specificity (>97%), and accuracy (>97%) across cross-validation and external testing, and it notes key limitations like dataset heterogeneity and erroneous multiple predictions (~9.7%). It is highly relevant and largely correct. The only minor gap is that it doesn\u2019t explicitly mention the limited extent of external validation and the need for prospective evaluation before clinical deployment (though it implies refinement is needed)."
+      },
+      "rag": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The evaluated answer closely matches the ground truth: it reports strong performance (DSC ~0.65), very high specificity (>97%), high accuracy (~97%), mentions large-scale training/validation and external testing, and notes key limitations (heterogeneity, limited external validation, need for further refinement). Minor discrepancies/extra details (e.g., specific sensitivity/IoU numbers and 9.7% error rate not explicitly in the ground truth) prevent a perfect correctness score, but they do not contradict the ground truth."
+      }
+    },
+    "used_files": {
+      "fs_explorer": [],
+      "rag": "/Users/clee/Desktop/code-projects/fs-explorer/data/benchmark/arxiv-100-papers/texts/Performance of a Deep Learning-Based Segmentation Model for Pancreatic Tumors on Public Endoscopic Ultrasound Datasets.txt"
+    },
+    "has_error": {
+      "fs_explorer": false,
+      "rag": false
+    },
+    "time_taken": {
+      "fs_explorer": 12.818586826324463,
+      "rag": 9.44664978981018
+    },
+    "answers": {
+      "fs_explorer": "The Vision Transformer-based deep learning model (using the USFM framework) demonstrated strong performance for segmenting pancreatic tumors in endoscopic ultrasound images. In 5-fold cross-validation, it achieved a mean Dice similarity coefficient (DSC) of 0.651, a sensitivity of 69.8%, a specificity of 98.8%, and an accuracy of 97.5%. On an external validation set, it achieved a DSC of 0.657 and an IoU of 0.614. Despite these strong results, 9.7% of cases showed erroneous multiple predictions, and dataset heterogeneity remains a challenge for refinement.",
+      "rag": "A Vision Transformer-based deep learning model is quite effective for segmenting pancreatic tumors in endoscopic ultrasound (EUS) images, according to the provided study. The model, trained on a large dataset of EUS images and validated externally, achieved solid performance metrics: Dice similarity coefficients (DSC) of 0.651 in cross-validation and 0.657 in external testing, with intersection over union (IoU) values around 0.58 to 0.61. Sensitivity ranged from about 69.8% to 71.8%, and specificity was very high (over 97%). Accuracy was also high at 97.5% in cross-validation. However, the study notes some limitations, including minor errors in about 9.7% of cases and the need for further validation due to dataset heterogeneity and limited external testing. Overall, the Vision Transformer-based approach shows strong potential but requires more refinement and broader testing for reliable clinical deployment."
+    }
+  },
+  {
+    "task": {
+      "question": "How does the WildSci dataset advance large language model reasoning in scientific domains with limited structured data?",
+      "answer": "WildSci advances scientific reasoning by providing a large, automatically synthesized dataset of multiple-choice science questions derived from peer-reviewed literature across nine disciplines and 26 subdomains. By converting complex, open-ended scientific reasoning tasks into a multiple-choice format, it enables scalable training with clear reward signals. Reinforcement learning is then used to finetune models on this data, leading to improved domain-specific performance, better generalization, and more informative training dynamics on a range of scientific benchmarks.",
+      "file": "texts/WildSci: Advancing Scientific Reasoning from In-the-Wild Literature.txt"
+    },
+    "tool_calls": [
+      "read",
+      "glob",
+      "read"
+    ],
+    "llm_evaluations": {
+      "fs_explorer": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The answer closely matches the ground truth: it mentions automatic synthesis from peer-reviewed literature, coverage across 9 disciplines/26 subdomains, conversion to multiple-choice for scalable training with clear reward signals, and use of reinforcement learning to improve performance. Minor omissions include explicitly noting improved generalization, more informative training dynamics, and improvements across a range of scientific benchmarks, but overall it is accurate and highly relevant."
+      },
+      "rag": {
+        "relevance": 10,
+        "correctness": 9,
+        "reason": "The answer closely matches the ground truth: it notes WildSci is automatically synthesized from peer-reviewed literature across 9 disciplines/26 subdomains, converts open-ended reasoning into multiple-choice for scalable training with clear reward signals, and enables reinforcement learning finetuning, leading to improved performance and generalization. It adds an extra point about benchmarking/evaluation (consistent with the ground truth\u2019s mention of scientific benchmarks and training dynamics). Minor deduction because it is slightly less explicit about \u201cmore informative training dynamics\u201d and \u201cimproved domain-specific performance\u201d as concrete outcomes, though these are implied."
+      }
+    },
+    "used_files": {
+      "fs_explorer": [],
+      "rag": "/Users/clee/Desktop/code-projects/fs-explorer/data/benchmark/arxiv-100-papers/texts/WildSci: Advancing Scientific Reasoning from In-the-Wild Literature.txt"
+    },
+    "has_error": {
+      "fs_explorer": false,
+      "rag": false
+    },
+    "time_taken": {
+      "fs_explorer": 13.33497428894043,
+      "rag": 10.957519054412842
+    },
+    "answers": {
+      "fs_explorer": "The WildSci dataset advances large language model (LLM) reasoning in scientific domains with limited structured data by automatically synthesizing domain-specific science questions directly from peer-reviewed literature. It covers 9 disciplines and 26 subdomains, addressing the lack of coverage and structured data in fields like medicine and materials science. By framing these complex reasoning tasks in a multiple-choice format, the dataset enables scalable training and reinforcement learning through the use of well-defined reward signals, allowing models to improve their performance on open-ended scientific questions.",
+      "rag": "The WildSci dataset advances large language model (LLM) reasoning in scientific domains with limited structured data through several key innovations based on the context provided:\n\n1. **Broader Coverage of Scientific Domains:** WildSci is synthesized from peer-reviewed literature and spans 9 scientific disciplines and 26 subdomains, addressing the limited dataset coverage that previously constrained LLM progress in areas like medicine and materials science.\n\n2. **Multiple-Choice Format for Scalability:** By framing complex, open-ended scientific questions in a multiple-choice format, WildSci makes it possible to train LLMs using well-defined reward signals and objective evaluation metrics, which previously were lacking in these fields.\n\n3. **Enabling Reinforcement Learning:** The structured format allows the application of reinforcement learning techniques (such as finetuning on these data), which have driven recent breakthroughs in reasoning within domains like math and coding, but were harder to apply in the absence of structured scientific datasets.\n\n4. **Improved Evaluation and Benchmarking:** WildSci's coverage and format permit the creation and use of robust scientific reasoning benchmarks, enabling better analysis of LLM performance, domain-specific behavior, and generalization capacity in scientific reasoning tasks.\n\nOverall, WildSci provides the structured data and scalable evaluation framework necessary for effective training and assessment of LLMs in complex scientific domains, thereby accelerating progress that was previously hindered by data scarcity and task complexity."
+    }
+  }
+]
