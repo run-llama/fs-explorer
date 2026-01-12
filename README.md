@@ -35,3 +35,6 @@ In the [`packages`](./packages/) directory we have two packages:
 
 - [**rag-starterkit**](./packages/rag-starterkit/): a traditional RAG application implementing hybrid search. (More in the [dedicated README](./packages/rag-starterkit/README.md)).
 - [**eval-framework**](./packages/eval-framework/): a simple evaluation framework that produces LLM-as-a-judge-based evals along with collecting time-, tool usage- and file-search-based statistics. Find out how to run the evaluation and collect statistics in the [dedicated README](./packages/eval-framework/README.md).
+- [**cache-arxiv**](./packages/cache-arxiv/): a utility package to cache arXiv papers for larger scale experiments.
+
+Find the evaluation guide [here](./packages/eval-framework/README.md).

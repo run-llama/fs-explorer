@@ -16,3 +16,7 @@ qdrant_storage/
 
 # logs
 fs-explorer.log
+rag-starterkit.log
+
+# benchmark with many more data
+texts/

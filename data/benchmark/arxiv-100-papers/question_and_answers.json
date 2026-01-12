@@ -1,0 +1,27 @@
+[
+    {
+        "question": "How does parallel processing in neural network hardware accelerators affect the effectiveness of correlation-based side-channel power analysis attacks?",
+        "answer": "Parallel processing in hardware accelerators causes multiple neurons in the same fully-connected layer to perform multiply-and-accumulate operations simultaneously on the same input, which aggregates their power consumption. This concurrency reduces the observable correlation between individual operations and the measured power trace, thereby decreasing the success rate of correlation power analysis attacks. The study derives equations showing that correlation decreases as the level of parallelism increases, and validates these findings using an FPGA-based vector-multiplication unit.",
+        "file": "texts/Influence of Parallelism in Vector-Multiplication Units on Correlation Power Analysis.txt"
+    },
+    {
+        "question": "How does CHDP address the challenges of learning and optimizing policies in hybrid discrete-continuous action spaces?",
+        "answer": "CHDP frames the hybrid action space problem as a fully cooperative game between two agents: one using a discrete diffusion policy and the other using a continuous diffusion policy. The continuous policy is conditioned on the discrete action representation to explicitly model their dependency. To avoid update conflicts, CHDP applies a sequential update scheme that promotes co-adaptation. For scalability in high-dimensional discrete spaces, it introduces a codebook that embeds discrete actions into a low-dimensional latent space, along with a Q-function-based guidance mechanism to align the embeddings with the discrete policy. This design improves expressiveness, scalability, and performance, outperforming prior methods by up to 19.3% in success rate.",
+        "file": "texts/CHDP: Cooperative Hybrid Diffusion Policies for Reinforcement Learning in Parameterized Action Space.txt"
+    },
+    {
+        "question": "What impact do medical personas and interaction styles have on the safety and performance of large language models in clinical decision-making?",
+        "answer": "Medical personas act as behavioral priors that produce context-dependent and non-monotonic effects in clinical LLMs. They improve accuracy and calibration in critical care tasks by up to about 20%, but can significantly degrade performance in primary-care settings. Interaction styles influence risk-taking and sensitivity, though their effects vary by model. While automated evaluations tend to favor medical personas in safety-critical scenarios, human clinicians show only moderate agreement on safety compliance and report low confidence in reasoning quality, indicating that personas introduce trade-offs rather than guaranteed safety or expertise.",
+        "file": "texts/The Persona Paradox: Medical Personas as Behavioral Priors in Clinical Language Models.txt"
+    },
+    {
+        "question": "How effective is a Vision Transformer-based deep learning model for segmenting pancreatic tumors in endoscopic ultrasound images?",
+        "answer": "The Vision Transformer-based segmentation model demonstrates strong and consistent performance on public EUS datasets. Trained and validated on over 17,000 images, it achieved mean Dice similarity coefficients around 0.65, high specificity (over 97%), and accuracy above 97% in both cross-validation and external testing. While results indicate robust tumor segmentation capability, challenges such as dataset heterogeneity, occasional erroneous multiple predictions, and limited external validation suggest that further refinement and prospective evaluation are needed before clinical deployment.",
+        "file": "texts/Performance of a Deep Learning-Based Segmentation Model for Pancreatic Tumors on Public Endoscopic Ultrasound Datasets.txt"
+    },
+    {
+        "question": "How does the WildSci dataset advance large language model reasoning in scientific domains with limited structured data?",
+        "answer": "WildSci advances scientific reasoning by providing a large, automatically synthesized dataset of multiple-choice science questions derived from peer-reviewed literature across nine disciplines and 26 subdomains. By converting complex, open-ended scientific reasoning tasks into a multiple-choice format, it enables scalable training with clear reward signals. Reinforcement learning is then used to finetune models on this data, leading to improved domain-specific performance, better generalization, and more informative training dynamics on a range of scientific benchmarks.",
+        "file": "texts/WildSci: Advancing Scientific Reasoning from In-the-Wild Literature.txt"
+    }
+]

@@ -112,14 +112,18 @@ def get_evaluation_dataset(dataset_file: str) -> list[EvalTask]:
     return eval_tasks
 
 
-async def run_evaluation(dataset_file: str, results_file: str = "results.json") -> None:
+async def run_evaluation(
+    dataset_file: str, results_file: str = "results.json", advanced: bool = False
+) -> None:
     tasks = get_evaluation_dataset(dataset_file)
     results: list[EvalResult] = []
     try:
         for i, task in enumerate(tasks):
             print(f"Starting task {i + 1} of {len(tasks)}")
-            wf_result = await run_workflow(question=task["question"])
-            pipeline_result = await run_pipeline(question=task["question"])
+            wf_result = await run_workflow(question=task["question"], advanced=advanced)
+            pipeline_result = await run_pipeline(
+                question=task["question"], advanced=advanced
+            )
             best_time = BestTime(
                 fs_explorer=wf_result["time_taken"], rag=pipeline_result["time_taken"]
             )
