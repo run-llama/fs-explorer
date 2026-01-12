@@ -26,7 +26,7 @@ export GOOGLE_API_KEY="..."
 Run:
 
 ```bash
-explore --task "Within the data/ directory, can you help e find the PDF file that contains an order or a complaint, and, once you found them, ask me which one I would like you to summarize"
+explore run --task "Within the data/ directory, can you help e find the PDF file that contains an order or a complaint, and, once you found them, ask me which one I would like you to summarize"
 ```
 
 ## Evaluation against traditional RAG
